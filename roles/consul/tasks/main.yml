@@ -1,0 +1,63 @@
+---
+- name: install utils 
+  apt: 
+    name:
+      - curl
+      - wget
+      - net-tools
+      - unzip
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+- name: check if consul exist
+  stat:
+    path: /usr/local/bin/consul
+  register: consul_exist
+
+- name: "CONSUL - download consul"
+  unarchive:
+    src: /home/vagrant/consulHP/consul_1.4.4_linux_amd64.zip
+    dest: /usr/local/bin
+    remote_src: yes
+  when: consul_exist.stat.exists == False
+
+- name: create group consul
+  group:
+    name: consul
+    system: yes
+    state: present
+
+- name: create user consul
+  user:
+    name: consul
+    shell: /sbin/nologin
+    system: yes
+    group: consul
+- name: create directory for consul data
+  file:
+    path: /var/lib/consul
+    state: directory
+    mode: 0755
+    group: consul
+    owner: consul
+
+- name: create directory /etc/consul.d
+  file: 
+    path: /etc/consul.d
+    state: directory
+    mode: 0755
+    group: consul
+
+- name: include for master
+  include: master.yml
+  when: consul_master is defined
+
+- name: include for agent
+  include: agent.yml
+  when: consul_master is not defined
+
+- name: start consul
+  service:
+    name: consul
+    state: started
+...

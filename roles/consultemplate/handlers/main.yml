@@ -1,0 +1,6 @@
+---
+- name: consultemplate reload
+  service:
+    name: consultemplate
+    state: reloaded
+...

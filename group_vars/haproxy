@@ -1,0 +1,2 @@
+consultemplate_listen:
+  - { name: "myapp", source: "*:8000" }

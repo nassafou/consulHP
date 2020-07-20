@@ -1,0 +1,29 @@
+---
+- name: "[PLAYBOOK] - install haproxy"
+  hosts: haproxy
+  become: yes
+  roles:
+    - haproxy
+    - consul
+    - consultemplate
+  tags:
+    - haproxy
+
+- name: "[PLAYBOOK] - install consul"
+  hosts: consul
+  become: yes
+  roles:
+    - consul
+  tags:
+    - consul
+
+- name: "[PLAYBOOK] - install appli"
+  hosts: myapp
+  become: yes
+  roles:
+    - app
+    - consul
+    - consul_services
+  tags:
+    - myapp
+...
